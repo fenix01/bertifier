@@ -1,0 +1,36 @@
+.bshape {
+	fill : #FF00FF;
+}
+
+.bcontrol {
+
+}
+
+#beautifyme .ui-selecting { background: #FECA40; }
+#beautifyme .ui-selected { background: #F39814; color: white; }
+#beautifyme { list-style-type: none; margin: 0; padding: 0; width: 60%; }
+
+.bcontrolCol>td{
+	text-align : center;
+}
+
+.bcontrolCol>td>svg {
+	display : block;
+	margin : auto;
+}
+
+svg {
+}
+
+.hide-text {
+    font-size : 0px;
+}
+
+.bheader{
+	color : red;
+}
+
+tr {
+max-height : 100%;
+max-width : 100%;
+}

@@ -1,0 +1,348 @@
+var lcommands = 4; //commande à gauche
+var rcommands = 0; //commande à droite
+
+function addRowCommand(tr, className, child)
+{
+	td = $("<td></td>").addClass("bcontrol").addClass(className);
+	$(child).appendTo(td);
+	$(td).prependTo(tr);
+	$(td).bind("click", function() {
+	
+	});
+}
+
+/*
+permet d'itérer sur tous les tds d'un tr donné
+en appliquant la fonction func sur chaque élément.
+on peut filter par classe en renseignant le paramètre filter
+*/
+function iterateRow( tr , exclude, func)
+{
+	$(tr).find('td').each(function(index, element){
+		if (exclude && !$(this).hasClass(exclude))
+			func(element);
+	});
+}
+
+/*
+permet d'itérer sur une colonne d'une table
+en appliquant la fonction func sur chaque élément
+la fonction func a le prototype suivant : func(element)
+*/
+function iterateCol( table , index, exclude, func)
+{
+	tds = 'td:nth-child('+index+')';
+	$(table).find(tds).each(function(index, element){
+		if (exclude && !$(this).hasClass(exclude))
+			func(element);
+	});
+}
+
+function getMinMaxRow(tr)
+{
+	min = Number.MAX_VALUE;
+	max = 0;
+	iterateRow($(tr), "bheader" , function(td){
+		
+		intRegex = new RegExp(/[0-9 -()+]+$/);
+		console.log($(td).text());
+		if ($(td).text().match(intRegex))
+		{
+			num = Number($(td).text().split(' ').join(''));
+			min = Math.min(min,num);
+			max = Math.max(max,num);
+		}
+	});
+	return [min, max];
+}
+
+/*
+permet de retourner la valeur min et max d'une colonne d'un tableau
+*/
+function getMinMaxColumn(td)
+{
+	min = Number.MAX_VALUE;
+	max = 0;
+	table = $(td).parent().parent().parent();
+	idx = td.index() + 1;
+	tds = 'td:nth-child('+idx+')';
+	iterateCol($(table), idx, "bheader", function(td){
+		intRegex = new RegExp(/[0-9 -()+]+$/);
+		if ($(td).text().match(intRegex))
+		{
+			num = Number($(td).text().split(' ').join(''));
+			max = Math.max(max,num);
+			min = Math.min(min,num);
+		}
+	});
+	return [min, max];
+}
+
+/*
+permet d'ajouter des colonnes de commandes au tableau bertifié (nouveau verbe : bertifier)
+*/
+function addColumns(object)
+{
+	//on cherche à partir de l'objet passé en paramètre toutes les balises tr
+	object.find('tr').each(function(index)
+	{
+		//pour chaque balise tr on ajoute au début et à la fin les commandes correspondantes
+		circle = $("<svg width='20' height='20'><circle cx='10' cy='10' r='8'></circle></svg>");
+		rect = $("<svg width='20' height='20'><rect width='20' height='10' x='0' y ='5'></rect></svg>");
+		line = $("<svg width='20' height='20'><line x1='0' y1='10' x2='10' y2='10' style='stroke:rgb(0,0,0);stroke-width:2' /></svg>");
+		header = $("<svg height='20' width='60'><text x='0' y='15' fill='blue'>Hearder</text></svg>");
+		addRowCommand($(this), "bcontrolRowCircle", circle); 
+		addRowCommand($(this), "bcontrolRowRect", rect);
+		addRowCommand($(this), "bcontrolRowLine", line);
+		addRowCommand($(this), "bcontrolRowHeader", header);
+		addRowCommand($(this), "bcontrolRowText", $("<p>text</p>"));
+	});	
+}
+
+/*
+permet d'ajouter des lignes de commandes au tableau bertifié
+*/
+function addRows(object)
+{
+	//on ajoute les commandes dans la partie thead du tableau
+	thead = $(object).find('thead');
+	//premier tr du thead
+	columns = $(thead).find("tr")[0].cells.length;
+	rowCircle = $("<tr class='bcontrolCol'></tr>");
+	rowRect = $("<tr class='bcontrolCol'></tr>");
+	rowLine = $("<tr class='bcontrolCol'></tr>");
+	rowHeader = $("<tr class='bcontrolCol'></tr>");
+	rowText = $("<tr class='bcontrolCol'></tr>");
+	
+	for( i = 0 ; i < columns ; i++)
+	{
+		if (i > lcommands && i < columns - rcommands)
+		{
+			//circle = "<svg width='20' height='20'><circle cx='10' cy='10' r='8'></circle></svg>";
+			//rect = "<svg width='20' height='20'><rect width='20' height='10' x='0' y ='5'></rect></svg>";
+			//line = "<svg width='20' height='20'><line x1='0' y1='10' x2='10' y2='10' style='stroke:rgb(0,0,0);stroke-width:2' /></svg>";
+			header ="<svg height='20' width='60'><text x='0' y='15' fill='blue'>Hearder</text></svg>";
+ 
+			//$(rowCircle).append("<td class='bcontrol bcontrolColCircle' >"+circle+"</td>");
+			//$(rowRect).append("<td class='bcontrol bcontrolColRect' >"+rect+"</td>");
+			//$(rowLine).append("<td class='bcontrol bcontrolColLine' >"+line+"</td>");
+			$(rowHeader).append("<td class='bcontrol bcontrolColHeader' >"+header+"</td>");
+			//$(rowText).append("<td class='bcontrol bcontrolColText' >text</td>");
+			
+		}
+		else
+		{
+				//$(rowCircle).append("<td></td>");
+				//$(rowRect).append("<td></td>");
+				//$(rowLine).append("<td></td>");
+				$(rowHeader).append("<td></td>");
+				//$(rowText).append("<td></td>");
+		}
+	}
+	//rowCircle.prependTo(thead);
+	//rowRect.prependTo(thead);
+	//rowLine.prependTo(thead);
+	rowHeader.prependTo(thead);
+	//rowText.prependTo(thead);
+}
+
+function addCircleOnClick()
+{
+	var minHW;
+	//permet d'activer la création de cercle sur une ligne 
+	$('.bcontrolRowCircle').bind("click", function() {
+		tr = $(this).parent();
+		bound = getMinMaxRow(tr);
+		
+		if (!minHW)
+			minHW = Math.min($(this).parent().height(), $(this).parent().width());
+		maxRadiusCircle = Math.sqrt( minHW*minHW + minHW*minHW ) / 2;
+		minRadiusCircle = maxRadiusCircle / 2;
+		size = (bound[1] - bound[0])/(maxRadiusCircle - minRadiusCircle);
+		
+		iterateRow($(tr), "bheader", function(td){
+			if (!$(td).hasClass("hide-text"))
+				addCircleToTd($(td), bound, size, minHW);
+		});
+	});	
+	//permet d'activer la création de cercle sur une colonne 
+/*	$('.bcontrolColCircle').bind("click", function() {
+		index = $(this).index();
+		bound = getMinMaxColumn($(this));
+		
+		minHW = Math.min($(this).parent().height(), $(this).parent().width());
+		maxRadiusCircle = Math.sqrt( minHW*minHW + minHW*minHW ) / 2;
+		minRadiusCircle = maxRadiusCircle / 2;
+		size = (bound[1] - bound[0])/(maxRadiusCircle - minRadiusCircle);
+		
+		table = $(this).parent().parent().parent();
+		idx = $(this).index() + 1;
+		tds = 'td:nth-child('+idx+')';
+		iterateCol($(table), idx, "bheader", function(td){
+			addCircleToTd($(td), bound, size, minHW);
+		});	
+
+	});*/
+}
+
+function addCircleToTd(td, bound, size, minHW)
+{
+	intRegex = new RegExp(/[0-9 -()+]+$/);
+	if (!$(td).hasClass('bcontrol'))
+		$(td).find('svg').remove();
+	if ($(td).find('svg').length == 0 && $(td).text().match(intRegex))
+	{
+		num = Number($(td).text().split(' ').join(''));
+		radius = minRadiusCircle + (num -  bound[0]) / size; 
+		svg = $('<svg xmlns="http://www.w3.org/2000/svg" viewbox=""></svg>');
+		$(svg).attr("height", minHW);
+		$(svg).attr("width", minHW);
+				
+		circle = Pablo.circle({
+			cx: minHW / 2,
+			cy: minHW / 2,
+			r:radius
+		})
+		.addClass('bshape')
+		.appendTo(svg);
+		svg.appendTo(td);
+		
+		$(td).addClass("hide-text");
+	}
+}
+
+function addRectOnClick()
+{
+	$('.bcontrolRowRect').bind("click", function() {
+		tr = $(this).parent();
+		$(tr).find('.bcontrolRowText').click();
+		bound = getMinMaxRow(tr);
+		size = (bound[1]-bound[0]) / $(this).height();
+		
+		iterateRow($(tr), "bheader", function(td){
+			addRectToTd($(td), bound, size);
+		});
+	});	
+}
+
+function addRectToTd(td, bound, size)
+{
+	intRegex = new RegExp(/[0-9 -()+]+$/);
+	if ($(td).find('svg').length == 0 && $(td).text().match(intRegex))
+	{
+		num = Number($(td).text().split(' ').join(''));
+		length = 5 + (num -  bound[0]) / size; 
+		svg = $('<svg xmlns="http://www.w3.org/2000/svg"></svg>');
+		$(svg).attr("height",$(td).height());
+		$(svg).attr("width",$(td).width());
+		
+		rect = Pablo.rect({
+			width: $(td).width(),
+			height: length,
+			x : 0,
+			y : $(td).height() - length
+		})
+		.addClass('bshape')
+		.appendTo(svg);
+		svg.appendTo(td);
+
+		$(td).addClass("hide-text");
+	}
+}
+
+
+function addLineOnClick()
+{
+	$('.bcontrolRowLine').bind("click", function() {
+		tr = $(this).parent();
+		$(tr).find('.bcontrolRowText').click();
+		bound = getMinMaxRow(tr);
+		size = (bound[1]-bound[0]) / $(this).height();
+		tr.find('td').each(function(index)
+		{
+			intRegex = new RegExp(/[0-9 -()+]+$/);
+			if ($(this).find('svg').length == 0 && $(this).text().match(intRegex))
+			{
+				num = Number($(this).text().split(' ').join(''));
+				
+				length =(num -  bound[0]) / size; 
+				svg = $('<svg xmlns="http://www.w3.org/2000/svg"></svg>');
+				$(svg).attr("height",$(this).height());
+				$(svg).attr("width",$(this).width());
+				$(svg).attr("style",'stroke:rgb(0,0,0);stroke-width:1');
+				
+				line = Pablo.line({
+					width: $(this).width(),
+					height: length,
+					x1 : 0,
+					y1 : $(this).height() - length -1,
+					x2 : $(this).width(),
+					y2 : $(this).height() - length -1
+					
+				})
+				.addClass('bshape')
+				.appendTo(svg);
+				svg.appendTo(this);
+		
+				$(this).addClass("hide-text");
+			}
+		});
+	
+		
+	});	
+}
+
+function addHeaderOnClick()
+{
+	$('.bcontrolRowHeader').bind("click", function() {
+		tr = $(this).parent();
+		iterateRow($(tr), "bcontrol", function(td){
+			$(td).addClass("bheader");
+			$(tr).find('.bcontrolRowText').click();
+		});
+	});
+	$('.bcontrolColHeader').bind("click", function() {
+		table = $(this).parent().parent().parent();
+		idx = $(this).index() + 1;
+		tds = 'td:nth-child('+idx+')';
+		iterateCol($(table), idx, "bcontrol", function(td){
+			$(td).addClass("bheader");
+			$(td).removeClass("hide-text");
+			$(td).find("svg").remove();
+		});	
+	});
+}
+
+
+
+
+function addTextOnClick()
+{
+	$('.bcontrolRowText').bind("click", function() {
+		tr = $(this).parent();
+		tr.find('td').each(function(index)
+		{
+			if (!$(this).hasClass("bcontrol"))
+			{
+				$(this).find('svg').remove();
+				intRegex = new RegExp(/[0-9 -()+]+$/);
+				if ($(this).text().match(intRegex))
+					$(this).removeClass("hide-text");
+			}
+		});
+		
+	});
+}
+
+$.fn.extend({bertifier: function() {
+	addColumns(this);
+	addRows(this);
+	addCircleOnClick();
+	addRectOnClick();
+	addLineOnClick();
+	addTextOnClick();
+	addHeaderOnClick();
+	//dragTab();
+	return $(this);
+}});
+

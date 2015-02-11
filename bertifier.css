@@ -1,0 +1,66 @@
+.bshape {
+	fill : #333;
+}
+
+.bcontrol {
+
+}
+
+.bertifyme {
+	-moz-user-select: none;
+	cursor: default;
+}
+
+.bertifyme .ui-selecting { background: #FECA40; }
+.bertifyme .ui-selected { background: #F39814; color: white; }
+
+#beautifyme { list-style-type: none; margin: 0; padding: 0; width: 60%; }
+
+.bcontrolCol>td{
+	text-align : center;
+}
+
+.bcontrolColResize {
+	padding : 20px 0px;
+}
+
+.bcontrolColResize div, .bcontrolRowResize div{
+	margin : auto;
+}
+
+.bcontrolRowResize {
+	min-width : 100px;
+	padding : 0px 20px;
+}
+
+.bcontrolCol>td>svg {
+	display : block;
+	margin : auto;
+}
+
+.hide-text {
+    font-size : 0px;
+}
+
+.bheader{
+	color : red;
+}
+
+.dragged {
+  position: absolute;
+  opacity: 0.5;
+  z-index: 2000;
+}
+
+svg {
+	display : block;
+	margin : auto;
+}
+
+.bleftBaseline {
+	fill : rgb(194, 62, 79);
+}
+
+.brightBaseline {
+	fill : rgb(118, 166, 211);
+}

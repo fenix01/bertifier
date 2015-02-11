@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Bertifier</title>
+        <link rel="stylesheet" type="text/css" href="./jqueryui/jquery-ui.min.css" />
+        <link rel="stylesheet" type="text/css" href="bertifier.css" />
+        <script type="text/javascript" src="jquery-1.11.2.min.js"></script>
+        <script type="text/javascript" src="pablo.min.js"></script>
+        <script type="text/javascript" src="./jqueryui/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="bertifier.js"></script>
+        <style>
+			body {
+			font-size : 12px;
+			}
+		</style>
+    </head>
+    <body>
+		<script>
+			$(document).ready(function(){
+				$("#beautifyme").bertifier();
+			});
+		</script>
+        <table border=1 text cellpadding=0 cellspacing=0 id="beautifyme" >
+            <thead>
+                <tr>
+                    <th title="Field #1">FIELD1</th>
+                    <th title="Field #5">header1</th>
+                    <th title="Field #6">header2</th>
+                    <th title="Field #7">header3</th>
+                    <th title="Field #8">header4</th>
+                    <th title="Field #9">header5</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>dim1</td>
+                    <td align="right">1</td>
+                    <td align="right">2</td>
+                    <td align="right">3</td>
+                    <td align="right">4</td>
+                    <td align="right">5</td>
+                </tr>
+                <tr>
+                    <td>dim2</td>
+                    <td align="right">5</td>
+                    <td align="right">2</td>
+                    <td align="right">2</td>
+                    <td align="right">1</td>
+                    <td align="right">4</td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</html>
